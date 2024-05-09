@@ -7,9 +7,14 @@ import { Snake, generateSnakes } from "./generateSnakes";
 interface Dice {
   value: number;
   rolling: boolean;
+  crooked: boolean;
 }
 
-const dice = proxy<Dice>({ value: 1, rolling: false });
+const dice = proxy<Dice>({
+  value: 1,
+  rolling: false,
+  crooked: Math.random() < 0.5,
+});
 
 interface Player {
   position: Cell["id"];
@@ -68,7 +73,14 @@ export async function rollDice() {
 
   dice.rolling = true;
   await delay(1000);
-  dice.value = Math.floor(Math.random() * 6) + 1;
+
+  dice.crooked = dice.crooked ? false : Math.random() < 0.5;
+  if (dice.crooked) {
+    dice.value = (Math.floor(Math.random() * 3) + 1) * 2;
+  } else {
+    dice.value = Math.floor(Math.random() * 6) + 1;
+  }
+
   dice.rolling = false;
 
   const prevPosition = player.position;

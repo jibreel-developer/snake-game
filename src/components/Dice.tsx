@@ -14,7 +14,10 @@ export default function Dice() {
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <button onClick={rollDice} className="rounded-md text-sm size-8 border-2">
+      <button
+        onClick={rollDice}
+        className={`rounded-md text-sm size-8 border-2 ${storeSnapshot.dice.crooked ? "border-blue-500" : ""}`}
+      >
         {storeSnapshot.dice.value}
       </button>
       <p className="text-xs">Click to roll</p>
