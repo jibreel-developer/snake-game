@@ -1,4 +1,11 @@
-import { Row } from "../types";
+export interface Cell {
+  id: number;
+}
+
+export interface Row {
+  id: number;
+  cells: Cell[];
+}
 
 export default function generateBoard(size: number) {
   const boardRows: Row[] = [];

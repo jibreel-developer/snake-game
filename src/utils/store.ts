@@ -1,6 +1,8 @@
 import { proxy } from "valtio";
 import delay from "./delay";
-import { Cell } from "../types";
+import generateBoard, { Cell, Row } from "./generateBoard";
+import { BOARD_SIZE, SNAKE_COUNT, WINNING_CELL } from "./constant";
+import { Snake, generateSnakes } from "./generateSnakes";
 
 interface Dice {
   value: number;
@@ -15,9 +17,9 @@ interface Player {
 }
 
 const player = proxy<Player>({
-  position: 50,
+  position: 0,
   get isWined() {
-    return this.position == 100;
+    return this.position == WINNING_CELL;
   },
 });
 
@@ -29,12 +31,20 @@ interface History {
 const history = proxy<History[]>([]);
 
 export interface Store {
+  board: Row[];
+  snakes: Snake[];
   dice: Dice;
   player: Player;
   history: History[];
 }
 
-export const store = proxy<Store>({ dice, player, history });
+export const store = proxy<Store>({
+  board: generateBoard(BOARD_SIZE),
+  snakes: generateSnakes({ count: SNAKE_COUNT, boardSize: BOARD_SIZE }),
+  dice,
+  player,
+  history,
+});
 
 // mutations
 function movePlayer() {
@@ -43,13 +53,18 @@ function movePlayer() {
     return;
   }
 
-  if (player.position + dice.value > 100) return;
+  if (player.position + dice.value > WINNING_CELL) return;
 
   player.position += dice.value;
+
+  const snake = store.snakes.find((s) => s.start == player.position);
+  if (snake) {
+    player.position = snake.end;
+  }
 }
 
 export async function rollDice() {
-  if (player.position == 100) return;
+  if (player.position == WINNING_CELL) return;
 
   dice.rolling = true;
   await delay(1000);
@@ -67,7 +82,13 @@ export async function rollDice() {
       return `Player stayed at ${currentPosition}`;
     }
 
-    if (player.isWined) return `Player won at ${currentPosition}`;
+    if (player.isWined) {
+      return `Player won at ${currentPosition}`;
+    }
+
+    if (currentPosition < prevPosition) {
+      return `Bitten by a snake, player moved from ${prevPosition} to ${currentPosition}`;
+    }
 
     return `Player moved from ${prevPosition} to ${currentPosition}`;
   })();
