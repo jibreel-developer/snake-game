@@ -1,3 +1,4 @@
+import { BOARD_SIZE, SNAKE_COUNT } from "./constant";
 import randomNumber from "./randomNumber";
 
 export interface Snake {
@@ -6,13 +7,10 @@ export interface Snake {
   end: number;
 }
 
-interface GenerateSnakesOpts {
-  count: number;
-  boardSize: number;
-}
+export default function generateSnakes() {
+  const count = SNAKE_COUNT;
+  const boardSize = BOARD_SIZE;
 
-export default function generateSnakes(opts: GenerateSnakesOpts) {
-  const { count, boardSize } = opts;
   const endOfBoard = boardSize * boardSize;
 
   const snakes: Snake[] = [];
@@ -21,10 +19,10 @@ export default function generateSnakes(opts: GenerateSnakesOpts) {
     let start = 0;
 
     do {
-      start = randomNumber(boardSize, endOfBoard);
+      start = randomNumber(boardSize, endOfBoard - 1);
     } while (snakes.findIndex((s) => s.start == start) != -1);
 
-    const end = randomNumber(0, start - 1);
+    const end = randomNumber(0, start - 2);
     snakes.push({ id: i + 1, start, end });
   }
 

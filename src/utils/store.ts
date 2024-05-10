@@ -1,7 +1,7 @@
 import { proxy } from "valtio";
 import delay from "./delay";
 import generateBoard, { Cell, Row } from "./generateBoard";
-import { BOARD_SIZE, SNAKE_COUNT, WINNING_CELL } from "./constant";
+import { WINNING_CELL } from "./constant";
 import generateSnakes, { Snake } from "./generateSnakes";
 import randomNumber from "./randomNumber";
 
@@ -45,8 +45,8 @@ export interface Store {
 }
 
 export const store = proxy<Store>({
-  board: generateBoard(BOARD_SIZE),
-  snakes: generateSnakes({ count: SNAKE_COUNT, boardSize: BOARD_SIZE }),
+  board: generateBoard(),
+  snakes: generateSnakes(),
   dice,
   player,
   history,
@@ -114,5 +114,5 @@ export async function rollDice() {
 
 export function resetGame() {
   player.position = 0;
-  store.snakes = generateSnakes({ count: SNAKE_COUNT, boardSize: BOARD_SIZE });
+  store.snakes = generateSnakes();
 }

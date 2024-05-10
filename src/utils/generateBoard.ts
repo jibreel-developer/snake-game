@@ -1,3 +1,5 @@
+import { BOARD_SIZE } from "./constant";
+
 export interface Cell {
   id: number;
 }
@@ -7,7 +9,8 @@ export interface Row {
   cells: Cell[];
 }
 
-export default function generateBoard(size: number) {
+export default function generateBoard() {
+  const size = BOARD_SIZE;
   const boardRows: Row[] = [];
 
   for (let i = 0; i < size; i++) {
