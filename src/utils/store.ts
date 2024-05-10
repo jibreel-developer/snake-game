@@ -2,7 +2,8 @@ import { proxy } from "valtio";
 import delay from "./delay";
 import generateBoard, { Cell, Row } from "./generateBoard";
 import { BOARD_SIZE, SNAKE_COUNT, WINNING_CELL } from "./constant";
-import { Snake, generateSnakes } from "./generateSnakes";
+import generateSnakes, { Snake } from "./generateSnakes";
+import randomNumber from "./randomNumber";
 
 interface Dice {
   value: number;
@@ -74,13 +75,13 @@ export async function rollDice() {
   dice.rolling = true;
   await delay(1000);
 
-  dice.crooked = dice.crooked ? false : Math.random() < 0.5;
   if (dice.crooked) {
-    dice.value = (Math.floor(Math.random() * 3) + 1) * 2;
+    dice.value = randomNumber(1, 3) * 2;
   } else {
-    dice.value = Math.floor(Math.random() * 6) + 1;
+    dice.value = randomNumber(1, 6);
   }
 
+  dice.crooked = dice.crooked ? false : Math.random() < 0.5;
   dice.rolling = false;
 
   const prevPosition = player.position;
@@ -113,4 +114,5 @@ export async function rollDice() {
 
 export function resetGame() {
   player.position = 0;
+  store.snakes = generateSnakes({ count: SNAKE_COUNT, boardSize: BOARD_SIZE });
 }
